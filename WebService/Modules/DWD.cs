@@ -34,7 +34,7 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
         {
             _configuration = configuration;
 
-            Get["/dwd"] = _ =>
+            Get["/api/dwd"] = _ =>
             {
                 try
                 {

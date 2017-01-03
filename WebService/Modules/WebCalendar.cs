@@ -36,7 +36,7 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
         {
             _configuration = configuration;
 
-            Get["/calendar"] = parameter =>
+            Get["/api/calendar"] = parameter =>
             {
                 List<Event> events = new List<Event>();
                 if (_configuration.CalendarUrls != null)
