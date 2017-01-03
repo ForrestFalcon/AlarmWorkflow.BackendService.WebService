@@ -1,0 +1,34 @@
+﻿<SettingsDisplayConfiguration>
+  <Identifier Name="WebService" DisplayText="WebService">
+    <Setting Name="Active" DisplayText="WebService aktivieren"
+             Description="Aktiviert den internen WebService und die Webseite" Category="General" />
+    <Setting Name="WebDirectory" DisplayText="WebVerzeichnis" Category="General"  Editor="DirectoryTypeEditor"
+             Description="Verzeichnis in welcher die Webseite für die Alarmansicht liegt." />
+    <Setting Name="UpdateInterval" DisplayText="Update Interval" Category="General" />
+    <Setting Name="Port" DisplayText="Port"
+             Description="Port für den Webservice" Category="General" />
+    <Setting Name="NonAcknowledgedOnly" DisplayText="Nur nicht-bestätigte Alarme"  IsDynamic="true"
+             Description="Zeige nur nicht bestätigte Alarme an" Category="General" />
+    <Setting Name="MaxAge" DisplayText="Maximales Alarmalter"  IsDynamic="true"
+             Description="Maximale Alter für Alarme in Minuten" Category="General" />
+
+    <Setting Name="HereAppId" DisplayText="App ID" Category="Here Maps" 
+             Description="App id von Here Maps" />
+    <Setting Name="HereAppCode" DisplayText="App Code" Category="Here Maps"
+             Description="App Code von Here Maps" />
+    <Setting Name="HereMapType" DisplayText="MapType" Category="Here Maps" Editor="DropDownTypeEditor" EditorParameter="Straße" />
+    <Setting Name="HereZoomControl" DisplayText="ZoomControl" Category="Here Maps" />
+    <Setting Name="HereZoomLevel" DisplayText="ZoomLevel" Category="Here Maps" 
+             Description="Zoom Level falls Routing nicht angezeigt werden kann" />
+
+    <Setting Name="OSMZoomLevel" DisplayText="OSM ZoomLevel" Category="OpenStreetMaps" />
+
+    <Setting Name="DwdId" DisplayText="DWD Area Id" Category="DWD"
+             Description="ID für den aktuellen Warnbereich" />
+
+    <Setting Name="CalendarUrls" DisplayText="iCal-File für Kalender (pro Zeile 1)" Category="Kalender"  
+             Description="Gib den Pfad für das iCal-File an. Entwerde als Webadresse mit http oder mithilfe von file:// einen Dateipfad. Einen Eintrag per Zeile." Editor="StringArrayTypeEditor"/>
+    <Setting Name="CalendarEntries" DisplayText="Maximale Kalendereinträge"  IsDynamic="true"
+             Description="Maximale Anzahl an Kalendereinträge, welche dargestellt werden." Category="Kalender" />
+  </Identifier>
+</SettingsDisplayConfiguration>
