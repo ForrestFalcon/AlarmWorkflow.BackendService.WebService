@@ -41,7 +41,8 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
                     var warnings = Warnings.GetWarningsById(_configuration.DwdId)
                         .Warnings
                         .OrderByDescending(warning => warning.Level)
-                        .ThenBy(warning => warning.Start).ToList();
+                        .ThenBy(warning => warning.Start)
+                        .FirstOrDefault();
 
                     return Response.AsJson(warnings);
                 }

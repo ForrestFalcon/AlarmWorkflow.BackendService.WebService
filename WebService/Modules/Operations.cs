@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using AlarmWorkflow.BackendService.ManagementContracts.Emk;
 using System.Linq;
 using AlarmWorkflow.BackendService.WebService.Models;
+using AlarmWorkflow.BackendService.DispositioningContracts;
 
 namespace AlarmWorkflow.BackendService.WebService.Modules
 {
@@ -28,9 +29,10 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
     {
         #region Fields
 
-        private IEmkServiceInternal _emkService;
-        private IOperationServiceInternal _operationService;
-        private WebServiceConfiguration _configuration;
+        private readonly IEmkServiceInternal _emkService;
+        private readonly IOperationServiceInternal _operationService;
+        private readonly IDispositioningServiceInternal _disposingService;
+        private readonly WebServiceConfiguration _configuration;
 
         #endregion
 
@@ -40,6 +42,7 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
         {
             _emkService = serviceProvider.GetService<IEmkServiceInternal>();
             _operationService = serviceProvider.GetService<IOperationServiceInternal>();
+            _disposingService = serviceProvider.GetService<IDispositioningServiceInternal>();
             _configuration = configuration;
 
             Get["/api/operation"] = parameter =>
@@ -47,10 +50,10 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
                 var ops = _operationService.GetOperationIds(0, false, 0);
                 return Response.AsJson(ops);
             };
-            Get["/api/operation/latest"] = _ => Latest();
-            Get["/api/operation/get/{id:int}"] = parameter => GetOp(parameter.id);
-            Get["/api/operation/getFilteredResources/{id:int}"] = parameter => GetFilteredResources(parameter.id);
-            Get["/api/operation/getAllResources"] = _ => GetAllResources();
+
+            Get["/api/operation/{id:int}"] = parameter => GetOp(parameter.id);
+            Get["/api/operation/getResources/{id:int}"] = parameter => GetResources(parameter.id);
+            Get["/api/operation/getResources"] = _ => GetAllResources();
         }
 
         #endregion
@@ -65,21 +68,6 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
                 return HttpStatusCode.NotFound;
             }
             return Response.AsJson(item);
-        }
-
-        private Response Latest()
-        {
-            IList<int> ids = _operationService.GetOperationIds(_configuration.MaxAge, _configuration.NonAcknowledgedOnly, 1);
-            if (ids.Count == 1)
-            {
-                Operation item = _operationService.GetOperationById(ids[0]);
-                return Response.AsJson(item);
-            }
-            else
-            {
-                string ret = null;
-                return Response.AsJson(ret);
-            }
         }
 
         private Response ResetOperation(int operationId)
@@ -108,26 +96,41 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
         
         private Response GetAllResources()
         {
-            IList<EmkResource> emkResources = _emkService.GetAllResources().ToList();
+            IList<EmkResource> emkResources = _emkService.GetAllResources().Where(item => item.IsActive).ToList();
             return Response.AsJson(emkResources);
         }
 
-        private Response GetFilteredResources(int id)
+        private Response GetResources(int id)
         {
             Operation operation = _operationService.GetOperationById(id);
 
             if (operation == null)
                 return HttpStatusCode.NotFound;
 
-            IList<EmkResource> emkResources = _emkService.GetAllResources().ToList();
-            List<ResourceObject> filteredResources = new List<ResourceObject>();
+            IList<EmkResource> emkResources = _emkService.GetAllResources().Where(item => item.IsActive).ToList();
 
             IList<OperationResource> filtered = _emkService.GetFilteredResources(operation.Resources).ToList();
-            foreach (OperationResource resource in filtered)
+            string[] dispatchedResources = _disposingService.GetDispatchedResources(id);
+
+            List<ResourceObject> filteredResources = new List<ResourceObject>();
+
+            foreach(EmkResource emkResource in emkResources)
             {
-                EmkResource emk = emkResources.FirstOrDefault(item => item.IsActive && item.IsMatch(resource));
-                filteredResources.Add(new ResourceObject(emk, resource));
+                OperationResource operationResource = filtered.FirstOrDefault(item => emkResource.IsMatch(item));
+                if (operationResource != null)
+                {
+                    filteredResources.Add(new ResourceObject(emkResource, operationResource, ResourceObject.ResourceType.Alarmed));
+                }
+                else if(dispatchedResources.FirstOrDefault(item => item == emkResource.Id) != null)
+                {
+                    filteredResources.Add(new ResourceObject(emkResource, operationResource, ResourceObject.ResourceType.Disposed));
+                } 
+                else
+                {
+                    filteredResources.Add(new ResourceObject(emkResource, operationResource, ResourceObject.ResourceType.None));
+                }
             }
+            
 
             return Response.AsJson(filteredResources);
         }

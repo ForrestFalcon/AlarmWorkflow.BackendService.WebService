@@ -79,9 +79,18 @@ namespace AlarmWorkflow.BackendService.WebService.Nancy
 
             string rootPath = RootPathProvider.GetRootPath();
 
-            conventions.StaticContentsConventions.AddDirectory("assets", Path.Combine(rootPath, "assets"));
-            conventions.StaticContentsConventions.AddDirectory("images", Path.Combine(rootPath, "images"));
-            conventions.StaticContentsConventions.AddDirectory("modules", Path.Combine(rootPath, "bower_components"));
+            var staticConventions = conventions.StaticContentsConventions;
+            staticConventions.AddFile("systemjs.config.js", Path.Combine(rootPath, "systemjs.config.js"));
+            staticConventions.AddFile("systemjs.config.extra.js", Path.Combine(rootPath, "systemjs.config.extra.js"));
+
+            staticConventions.AddDirectory("assets");
+            staticConventions.AddDirectory("css");
+            staticConventions.AddDirectory("images");
+            staticConventions.AddDirectory("font");
+            staticConventions.AddDirectory("html");
+            staticConventions.AddDirectory("app");
+            staticConventions.AddDirectory("bower_components");
+            staticConventions.AddDirectory("node_modules");
         }
 
         #endregion

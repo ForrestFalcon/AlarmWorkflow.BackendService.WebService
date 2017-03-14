@@ -23,6 +23,10 @@ namespace AlarmWorkflow.BackendService.WebService.Models
     /// </summary>
     public class ResourceObject
     {
+        #region Enum
+        public enum ResourceType { None = 0, Alarmed = 1, Disposed = 2 };
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -35,6 +39,11 @@ namespace AlarmWorkflow.BackendService.WebService.Models
         /// </summary>
         public OperationResource Resource { get; set; }
 
+        /// <summary>
+        /// The <see cref="ResourceType"/> how the resource is alarmed
+        /// </summary>
+        public ResourceType Type { get; set; }
+
         #endregion
 
         #region Constructor
@@ -44,12 +53,11 @@ namespace AlarmWorkflow.BackendService.WebService.Models
         /// </summary>
         /// <param name="emk">The filtered entry. Can be null!</param>
         /// <param name="resource">The original entry. Can't be null!</param>
-        public ResourceObject(EmkResource emk, OperationResource resource)
+        public ResourceObject(EmkResource emk, OperationResource resource, ResourceType type)
         {
-            Assertions.AssertNotNull(resource, "resource");
-
             Emk = emk;
             Resource = resource;
+            Type = type;
         }
 
         #endregion
