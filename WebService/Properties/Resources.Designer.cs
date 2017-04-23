@@ -79,6 +79,15 @@ namespace AlarmWorkflow.BackendService.WebService.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error while fetching new data from DWD..
+        /// </summary>
+        internal static string WebServiceDWDError {
+            get {
+                return ResourceManager.GetString("WebServiceDWDError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Starting web service on port {0}.
         /// </summary>
         internal static string WebServiceStarting {

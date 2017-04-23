@@ -123,6 +123,9 @@
   <data name="WebDirectoryNotFound" xml:space="preserve">
     <value>WWW Directory not found. Please change in the configuration.</value>
   </data>
+  <data name="WebServiceDWDError" xml:space="preserve">
+    <value>Error while fetching new data from DWD.</value>
+  </data>
   <data name="WebServiceStarting" xml:space="preserve">
     <value>Starting web service on port {0}</value>
   </data>

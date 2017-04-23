@@ -14,14 +14,9 @@
 // along with AlarmWorkflow.  If not, see <http://www.gnu.org/licenses/>.
 
 using AlarmWorkflow.BackendService.ManagementContracts;
-using AlarmWorkflow.BackendService.ManagementContracts.Emk;
-using AlarmWorkflow.BackendService.WebService.Models;
 using AlarmWorkflow.Shared.Core;
 using Nancy;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AlarmWorkflow.BackendService.WebService.Modules
 {
