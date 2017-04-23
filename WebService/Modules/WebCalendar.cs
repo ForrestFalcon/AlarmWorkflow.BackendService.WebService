@@ -14,6 +14,9 @@
 // along with AlarmWorkflow.  If not, see <http://www.gnu.org/licenses/>.
 
 using AlarmWorkflow.BackendService.WebService.Models;
+using AlarmWorkflow.BackendService.WebService.Properties;
+using AlarmWorkflow.Shared.Diagnostics;
+using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Nancy;
 using System;
@@ -67,12 +70,25 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
                 Uri uriResult;
                 if (Uri.TryCreate(calendarUrl, UriKind.Absolute, out uriResult))
                 {
-                    var calendarCollection = Ical.Net.Calendar.LoadFromUri(uriResult);
-                    foreach (IEvent webEvent in calendarCollection.First().Events)
+                    IICalendarCollection calendarCollection = null;
+                    try
                     {
-                        if (webEvent.Start.Date >= DateTime.Now.Date)
+                        calendarCollection = Ical.Net.Calendar.LoadFromUri(uriResult);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Instance.LogFormat(LogType.Warning, this, Resources.WebCalendarIcalError, calendarUrl);
+                        Logger.Instance.LogException(this, e);
+                    }
+
+                    if (calendarCollection != null)
+                    {
+                        foreach (IEvent webEvent in calendarCollection.First().Events)
                         {
-                            yield return webEvent;
+                            if (webEvent.Start.Date >= DateTime.Now.Date)
+                            {
+                                yield return webEvent;
+                            }
                         }
                     }
                 }
