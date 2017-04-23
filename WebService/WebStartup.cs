@@ -79,6 +79,11 @@ namespace AlarmWorkflow.BackendService.WebService
         /// <param name="app"></param>
         public void Configuration(IAppBuilder app)
         {
+
+#if DEBUG
+            app.UseErrorPage();
+#endif
+
             app.UseCors(CorsOptions.AllowAll);
             app.MapSignalR();
             app.UseNancy(options =>
@@ -87,6 +92,6 @@ namespace AlarmWorkflow.BackendService.WebService
             });
         }
 
-        #endregion
+#endregion
     }
 }
