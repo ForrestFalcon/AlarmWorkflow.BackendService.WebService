@@ -13,8 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with AlarmWorkflow.  If not, see <http://www.gnu.org/licenses/>.
 
+using AlarmWorkflow.BackendService.DispositioningContracts;
+using AlarmWorkflow.BackendService.ManagementContracts;
+using AlarmWorkflow.BackendService.WebService.Hubs;
 using AlarmWorkflow.BackendService.WebService.Nancy;
 using AlarmWorkflow.Shared.Core;
+using Microsoft.AspNet.SignalR;
+using Microsoft.Owin.Cors;
 using Owin;
 using System;
 
@@ -22,10 +27,11 @@ namespace AlarmWorkflow.BackendService.WebService
 {
     internal class WebStartup
     {
-        #region Constants
+        #region Fields
 
         private IServiceProvider _serviceProvider;
         private WebServiceConfiguration _configuration;
+        private IHubContext _operationHub;
 
         #endregion
 
@@ -36,9 +42,35 @@ namespace AlarmWorkflow.BackendService.WebService
             Assertions.AssertNotNull(serviceProvider, "serviceProvider");
             Assertions.AssertNotNull(configuration, "serviceProvider");
 
-            this._serviceProvider = serviceProvider;
-            this._configuration = configuration;
+            _serviceProvider = serviceProvider;
+            _configuration = configuration;
+            _operationHub = GlobalHost.ConnectionManager.GetHubContext<OperationHub>();
+
+
+            IDispositioningServiceInternal dispositioningService = serviceProvider.GetService<IDispositioningServiceInternal>();
+            dispositioningService.Dispositioning += DispositioningService_Dispositioning;
+
+            IOperationServiceInternal operationService = serviceProvider.GetService<IOperationServiceInternal>();
+            operationService.NewOperation += OperationService_NewOperation;
+            operationService.OperationAcknowledged += OperationService_OperationAcknowledged;
+            
         }
+
+        private void DispositioningService_Dispositioning(object sender, DispositionEventArgs e)
+        {
+            _operationHub.Clients.All.reloadResources(e.OperationId);
+        }
+
+        private void OperationService_OperationAcknowledged(int operationId)
+        {
+            _operationHub.Clients.All.resetOperation();
+        }
+
+        private void OperationService_NewOperation(Operation operation)
+        {
+            _operationHub.Clients.All.receiveOperation(operation);
+        }
+        
 
         /// <summary>
         /// This code configures Web API. The Startup class is specified as a type
@@ -47,12 +79,19 @@ namespace AlarmWorkflow.BackendService.WebService
         /// <param name="app"></param>
         public void Configuration(IAppBuilder app)
         {
+
+#if DEBUG
+            app.UseErrorPage();
+#endif
+
+            app.UseCors(CorsOptions.AllowAll);
+            app.MapSignalR();
             app.UseNancy(options =>
             {
                 options.Bootstrapper = new CustomBootstrapper(_serviceProvider, _configuration);
             });
         }
 
-        #endregion
+#endregion
     }
 }

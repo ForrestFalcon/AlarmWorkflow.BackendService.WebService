@@ -55,7 +55,7 @@ namespace AlarmWorkflow.BackendService.WebService
         {
             base.OnStart();
             
-            WebServiceConfiguration configuration = new WebServiceConfiguration(this.ServiceProvider);
+            WebServiceConfiguration configuration = new WebServiceConfiguration(ServiceProvider);
 
             try
             {
@@ -82,7 +82,7 @@ namespace AlarmWorkflow.BackendService.WebService
         private IDisposable StartWebService(WebServiceConfiguration configuration)
         {
             Logger.Instance.LogFormat(LogType.Info, this, Resources.WebServiceStarting, configuration.Port);
-            WebStartup startup = new WebStartup(this.ServiceProvider, configuration);
+            WebStartup startup = new WebStartup(ServiceProvider, configuration);
 
             var options = new StartOptions()
             {

@@ -16,6 +16,7 @@
 using AlarmWorkflow.BackendService.SettingsContracts;
 using AlarmWorkflow.Shared.Core;
 using Nancy;
+using System.Linq;
 using System;
 using System.Collections.Generic;
 
@@ -23,6 +24,12 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
 {
     public class Settings : NancyModule
     {
+        #region Constants
+
+        private readonly string[] SettingsWhitelist = { "WebService", "Shared" };
+
+        #endregion
+
         #region Fields
 
         private IServiceProvider _serviceProvider;
@@ -42,20 +49,27 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
                 return Response.AsJson(configuration.Identifiers);
             };
 
-            Get["/api/settings/get/{name}"] = parameter =>
+            Get["/api/settings/{name}"] = parameter =>
             {
                 SettingsDisplayConfiguration configuration = settingsService.GetDisplayConfiguration();
                 IdentifierInfo identifier = configuration.Identifiers.Find(_ => _.Name == parameter.name);
 
                 if (identifier == null)
+                {
                     return HttpStatusCode.NoContent;
-
-                Dictionary<string, SettingItem> settingsDic = new Dictionary<string, SettingItem>();
+                }
+                if(!SettingsWhitelist.Contains(identifier.Name))
+                {
+                    //authorization not supported yet. Send 403 if not in whitelist.
+                    return 403;
+                }
+                
+                Dictionary<string, Object> settingsDic = new Dictionary<string, Object>();
 
                 foreach (SettingInfo info in identifier.Settings)
                 {
                     SettingItem setting = settingsService.GetSetting(info.CreateSettingKey());
-                    settingsDic.Add(setting.Name, setting);
+                    settingsDic.Add(setting.Name, setting.Value);
                 }
 
                 return Response.AsJson(settingsDic);

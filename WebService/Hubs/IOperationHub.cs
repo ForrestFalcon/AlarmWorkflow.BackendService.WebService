@@ -13,24 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with AlarmWorkflow.  If not, see <http://www.gnu.org/licenses/>.
 
-using AlarmWorkflow.BackendService.ManagementContracts;
 using AlarmWorkflow.Shared.Core;
-using Nancy;
-using System;
 
-namespace AlarmWorkflow.BackendService.WebService.Modules
+namespace AlarmWorkflow.BackendService.WebService.Hubs
 {
-    public class Home : NancyModule
+    public interface IOperationHub
     {
-        #region Constructors
-
-        public Home(IServiceProvider serviceProvider)
-        {
-            IEmkServiceInternal emkService = serviceProvider.GetService<IEmkServiceInternal>();
-
-            Get["/"] = _ => View["index.html"];
-        }
-
-        #endregion
+        void receiveOperation(Operation operation);
+        void reloadResources(int operationId);
+        void resetOperation();
+        void settingsChanged();
     }
 }

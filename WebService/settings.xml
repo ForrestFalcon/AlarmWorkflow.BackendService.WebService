@@ -1,21 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SettingsConfiguration Version="1" Identifier="WebService">
-  <Setting Name="HereAppId" Type="System.String" IsNull="True"></Setting>
-  <Setting Name="HereAppCode" Type="System.String" IsNull="True"></Setting>
-  <Setting Name="HereZoomControl" Type="System.Boolean">false</Setting>
-  <Setting Name="HereMapType" Type="System.String" IsNull="False">Straße</Setting>
-  <Setting Name="HereZoomLevel" Type="System.Int32" IsNull="False">12</Setting>
-
+  <Setting Name="GoogleZoomLevel" Type="System.Int32" IsNull="False">12</Setting>
   <Setting Name="OSMZoomLevel" Type="System.Int32" IsNull="False">17</Setting>
 
-  <Setting Name="Active" Type="System.Boolean" IsNull="False">true</Setting>
-  <Setting Name="NonAcknowledgedOnly" Type="System.Boolean" IsNull="False">true</Setting>
-  <Setting Name="UpdateInterval" Type="System.Int32" IsNull="False">10000</Setting>
+  <Setting Name="Active" Type="System.Boolean" IsNull="False">true</Setting>  
   <Setting Name="MaxAge" Type="System.Int32" IsNull="False">60</Setting>
   <Setting Name="Port" Type="System.Int32" IsNull="False">9000</Setting>
   <Setting Name="WebDirectory" Type="System.String" IsNull="False">C:\www</Setting>
 
   <Setting Name="DwdId" Type="System.Int32" IsNull="True"></Setting>
+  <Setting Name="WeatherUndergroundKey" Type="System.String" IsNull="True"></Setting>
+  <Setting Name="WeatherUndergroundCity" Type="System.String" IsNull="True"></Setting>
   
   <Setting Name="CalendarUrls" Type="System.String" IsNull="True"></Setting>
   <Setting Name="CalendarEntries" Type="System.Int32" IsNull="False">7</Setting>

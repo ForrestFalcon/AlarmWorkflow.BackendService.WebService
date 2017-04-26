@@ -1,5 +1,6 @@
 AlarmWorkflow.BackendService.WebService
 =======================================
+[![Build status](https://ci.appveyor.com/api/projects/status/8yera3sy4hl4sldi?svg=true)](https://ci.appveyor.com/project/ForrestFalcon/alarmworkflow-backendservice-webservice)
 
 What is it?
 -----------

@@ -14,11 +14,16 @@
 // along with AlarmWorkflow.  If not, see <http://www.gnu.org/licenses/>.
 
 using AlarmWorkflow.BackendService.WebService.Models;
+using AlarmWorkflow.BackendService.WebService.Properties;
+using AlarmWorkflow.Shared.Diagnostics;
+using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Nancy;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 
 namespace AlarmWorkflow.BackendService.WebService.Modules
 {
@@ -67,15 +72,41 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
                 Uri uriResult;
                 if (Uri.TryCreate(calendarUrl, UriKind.Absolute, out uriResult))
                 {
-                    var calendarCollection = Ical.Net.Calendar.LoadFromUri(uriResult);
-                    foreach (IEvent webEvent in calendarCollection.First().Events)
+                    IICalendarCollection calendarCollection = LoadFromUri(uriResult);
+
+                    if (calendarCollection != null)
                     {
-                        if (webEvent.Start.Date >= DateTime.Now.Date)
+                        foreach (IEvent webEvent in calendarCollection.First().Events)
                         {
-                            yield return webEvent;
+                            if (webEvent.Start.Date >= DateTime.Now.Date)
+                            {
+                                yield return webEvent;
+                            }
                         }
                     }
                 }
+            }
+        }
+
+        public IICalendarCollection LoadFromUri(Uri uri)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    using (var response = client.GetAsync(uri).Result)
+                    {
+                        response.EnsureSuccessStatusCode();
+                        var result = response.Content.ReadAsStringAsync().Result;
+                        return Ical.Net.Calendar.LoadFromStream(new StringReader(result)) as IICalendarCollection;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Instance.LogFormat(LogType.Warning, this, Resources.WebCalendarIcalError, uri.ToString());
+                Logger.Instance.LogException(this, e);
+                return null;
             }
         }
 

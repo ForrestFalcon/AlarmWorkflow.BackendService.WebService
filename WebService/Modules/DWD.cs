@@ -17,6 +17,8 @@ using dwdWarnings;
 using Nancy;
 using System.Linq;
 using System;
+using AlarmWorkflow.BackendService.WebService.Properties;
+using AlarmWorkflow.Shared.Diagnostics;
 
 namespace AlarmWorkflow.BackendService.WebService.Modules
 {
@@ -41,12 +43,16 @@ namespace AlarmWorkflow.BackendService.WebService.Modules
                     var warnings = Warnings.GetWarningsById(_configuration.DwdId)
                         .Warnings
                         .OrderByDescending(warning => warning.Level)
-                        .ThenBy(warning => warning.Start).ToList();
+                        .ThenBy(warning => warning.Start)
+                        .FirstOrDefault();
+
 
                     return Response.AsJson(warnings);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Logger.Instance.LogFormat(LogType.Warning, this, Resources.WebServiceDWDError);
+                    Logger.Instance.LogException(this, e);
                     return HttpStatusCode.InternalServerError;
                 }
 

@@ -22,6 +22,8 @@ using AlarmWorkflow.Shared;
 using AlarmWorkflow.Shared.Core;
 using AlarmWorkflow.Shared.Settings;
 using AlarmWorkflow.Shared.Specialized;
+using Microsoft.AspNet.SignalR;
+using AlarmWorkflow.BackendService.WebService.Hubs;
 
 namespace AlarmWorkflow.BackendService.WebService
 {
@@ -46,8 +48,6 @@ namespace AlarmWorkflow.BackendService.WebService
         internal string WebDirectory => _settings.GetSetting(WebServiceSettingKeys.WebDirectory).GetValue<string>();
 
         internal int Port => _settings.GetSetting(WebServiceSettingKeys.Port).GetValue<int>();
-
-        internal bool NonAcknowledgedOnly => _settings.GetSetting(WebServiceSettingKeys.NonAcknowledgedOnly).GetValue<bool>();
 
         internal int MaxAge => _settings.GetSetting(WebServiceSettingKeys.MaxAge).GetValue<int>();
 
@@ -92,6 +92,8 @@ namespace AlarmWorkflow.BackendService.WebService
         private void _settings_SettingChanged(object sender, SettingChangedEventArgs e)
         {
             //reload changes per push (maybe with SignalR)
+            IHubContext operationHub = GlobalHost.ConnectionManager.GetHubContext<OperationHub>();
+            operationHub.Clients.All.settingsChanged();
         }
 
         #endregion

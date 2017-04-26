@@ -61,11 +61,29 @@ namespace AlarmWorkflow.BackendService.WebService.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error loading calendar for url {0}.
+        /// </summary>
+        internal static string WebCalendarIcalError {
+            get {
+                return ResourceManager.GetString("WebCalendarIcalError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to WWW Directory not found. Please change in the configuration..
         /// </summary>
         internal static string WebDirectoryNotFound {
             get {
                 return ResourceManager.GetString("WebDirectoryNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while fetching new data from DWD..
+        /// </summary>
+        internal static string WebServiceDWDError {
+            get {
+                return ResourceManager.GetString("WebServiceDWDError", resourceCulture);
             }
         }
         
